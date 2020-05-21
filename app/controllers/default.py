@@ -17,7 +17,7 @@ def index():
 
 @app.route('/receitas', methods=['POST'])
 def receitas():
-    df_ingredientes = pd.read_csv('D:/Documentos/Ironhack/Projects/Flask API Recipe/app/data/df_ingredientes2.csv')
+    df_ingredientes = pd.read_csv('./app/data/df_ingredientes2.csv')
     form = IngredientForm()
     if form.category.data and form.ingredients.data:
         category = form.category.data
