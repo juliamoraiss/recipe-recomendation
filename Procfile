@@ -1,1 +1,1 @@
-web: gunicorn --chdir app default:app
+web: gunicorn --chdir app/controllers default:app
