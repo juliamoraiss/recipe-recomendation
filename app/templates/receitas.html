@@ -1,0 +1,37 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <title>Receitas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="static/receitas.css">
+
+  <meta name="theme-color" content="#fafafa">
+</head>
+
+<body>
+
+<h1>RECEITAS <span class="header-span"></span></h1><hr>
+<div class="all-the-foods">
+
+  {% for recipe in recipes %}
+    <a target="_blank" href="{{  '%s'%recipe[0]  }}">
+      <div class="clip-path-container">
+        <div class="description-holder">
+          <h4>{{  recipe[3]  }}</h4>
+          <p>{{  recipe[2]  }}</p>
+          <p>{{  recipe[1]  }}</p>
+        </div>
+        {% if recipe[8] == None %}
+        <div class="food"></div>
+        {% else %}
+        <div class="food" style="background-image: url({{  recipe[8]  }})"></div>
+        {% endif %}
+      </div>
+    </a>
+  {% endfor %}
+
+</div>
+</body>

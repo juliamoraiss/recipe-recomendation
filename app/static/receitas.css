@@ -1,0 +1,108 @@
+body {
+  font-family: 'Overpass', sans-serif;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+h1 {
+  font: 700 36px 'Oswald', sans-serif;
+  text-align: center;
+  color: #000;
+}
+
+.header-span {
+  display: block;
+  font-weight: 100;
+}
+
+hr {
+  max-width: 5em;
+  margin-bottom: 30px;
+}
+
+.all-the-foods {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+div.clip-path-container {
+  display: inline-block;
+  position: relative;
+  height: 250px;
+  width: 250px;
+  margin: 10px ;
+  padding: 3px;
+  cursor: pointer;
+  transition: all .2s ease-in-out;
+  overflow: hidden;
+  border-radius: 50%;
+  border-collapse: separate;
+  background-color: #222;
+}
+
+.clip-path-container:focus,
+.clip-path-container:active,
+.clip-path-container:hover {
+  border-radius: 50%;
+  outline: none;
+}
+
+.food {
+  height: 250px;
+  width: 250px;
+  background-size: cover;
+  transition: all .2s ease-in-out;
+  transform: scale(1.2);
+  outline: none;
+  overflow: hidden;
+  clip-path: polygon(0 100%, 0 0, 52% 0, 52% 100%);
+  clip-path: polygon(0 100%, 0 0, 100% 0, 100% 100%);
+  background-position: center;
+  background-image: url('./img/receitas-placeholder.jpg');
+}
+
+.clip-path-container:hover .food {
+  clip-path: polygon(50% 100%, 50% 0, 100% 0, 100% 100%);
+  transform: scale(1.1);
+
+}
+
+.clip-path-container:hover .description-holder {
+  left: 20px;
+  opacity: 1;
+}
+
+.description-holder {
+  position: absolute;
+  top: 35px;
+  left: 120px;
+  height: 300px;
+  width: 100px;
+  transition: all .4s ease-in-out;
+  transition-delay: .1s;
+  opacity: 0;
+  text-align: right;
+}
+
+.guac-holder {
+  top: 45px;
+}
+
+.description-holder h4 {
+  font-size: 14px;
+  margin-bottom: -8px;
+}
+
+.description-holder p {
+  max-width: 100px;
+  font-size: 12px;
+  line-height: 14px;
+  text-transform: none;
+
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
