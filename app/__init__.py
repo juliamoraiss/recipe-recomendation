@@ -9,11 +9,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY')
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+# db = SQLAlchemy(app)
+# migrate = Migrate(app, db)
 
-manager = Manager(app)
-manager.add_command('db', MigrateCommand)
+# manager = Manager(app)
+# manager.add_command('db', MigrateCommand)
 
 from app.models import tables
 from app.controllers import default
