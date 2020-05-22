@@ -6,6 +6,7 @@ import pandas as pd
 from fuzzywuzzy import fuzz
 import sqlalchemy as db
 import os
+from app.controllers.clean_ingredients import clean_ingredient
 
 
 @app.route('/')
@@ -25,6 +26,7 @@ def receitas():
 
         id_ingredient_user = []
         for ingredient in user_ingredients:
+            ingredient = clean_ingredient(ingredient)
             lst_id_ingredient = df_ingredientes.loc[df_ingredientes['ingrediente'] == f'{ingredient}', :]['id_ingrediente'].values
 
             if len(lst_id_ingredient) > 0:
@@ -32,68 +34,71 @@ def receitas():
                 id_ingredient_user.append(id_ingredient)
             else:
                 for unique_ingredient in df_ingredientes['ingrediente']:
-                    ratio = fuzz.token_set_ratio(ingredient, unique_ingredient)
-                    if ratio > 85:
+                    ratio = fuzz.partial_ratio(ingredient, unique_ingredient)
+
+                    if ratio > 80:
                         lst_id_ingredient = df_ingredientes.loc[df_ingredientes['ingrediente'] == f'{unique_ingredient}', :]['id_ingrediente'].values
                         id_ingredient = lst_id_ingredient[0]
                         id_ingredient_user.append(id_ingredient)
                         break
-
         if len(id_ingredient_user) > 1:
             id_ingredient_user = tuple(id_ingredient_user)
-        else:
+        elif len(id_ingredient_user) == 1:
             id_ingredient_user = f'({id_ingredient_user[0]})'
+        if len(id_ingredient_user) == 0:
+            recipes = []
+        else:
 
-        engine = db.create_engine(os.environ.get('DATABASE_URL'))
+            engine = db.create_engine(os.environ.get('DATABASE_URL')
 
 
-        query = f'''SELECT 
-                    t2.href,
-                    t2.rendimento,
-                    t2.tempo_preparo,
-                    t2.nome,
-                    t2.qtde_ingrediente_usuario,
-                    t2.qtd_ingrediente,
-                    t2.ingredients_ratio,
-                    t2.categoria,
-                    rim.image_url
-                FROM
-                    (SELECT 
-                        *
+            query = f'''SELECT 
+                        t2.href,
+                        t2.rendimento,
+                        t2.tempo_preparo,
+                        t2.nome,
+                        t2.qtde_ingrediente_usuario,
+                        t2.qtd_ingrediente,
+                        t2.ingredients_ratio,
+                        t2.categoria,
+                        rim.image_url
                     FROM
                         (SELECT 
-                        r.href,
-                            r.rendimento,
-                            r.tempo_preparo,
-                            r.nome,
-                            COUNT(i.id_ingrediente) AS qtde_ingrediente_usuario,
-                            r.qtd_ingrediente,
-                            (COUNT(i.id_ingrediente) / r.qtd_ingrediente) AS ingredients_ratio,
-                            r.categoria
-                    FROM
-                        ingredient i
-                    JOIN recipe_ingredient ri ON i.id_ingrediente = ri.id_ingredient
-                    JOIN recipes_df r ON r.id_recipes_df = ri.id_recipe
-                    WHERE
-                        i.id_ingrediente IN {id_ingredient_user}
-                    GROUP BY ri.id_recipe
-                    ORDER BY qtde_ingrediente_usuario DESC) AS t
-                    WHERE
-                        t.ingredients_ratio > 0.5
-'''
+                            *
+                        FROM
+                            (SELECT 
+                            r.href,
+                                r.rendimento,
+                                r.tempo_preparo,
+                                r.nome,
+                                COUNT(i.id_ingrediente) AS qtde_ingrediente_usuario,
+                                r.qtd_ingrediente,
+                                (COUNT(i.id_ingrediente) / r.qtd_ingrediente) AS ingredients_ratio,
+                                r.categoria
+                        FROM
+                            ingredient i
+                        JOIN recipe_ingredient ri ON i.id_ingrediente = ri.id_ingredient
+                        JOIN recipes_df r ON r.id_recipes_df = ri.id_recipe
+                        WHERE
+                            i.id_ingrediente IN {id_ingredient_user}
+                        GROUP BY ri.id_recipe
+                        ORDER BY qtde_ingrediente_usuario DESC) AS t
+                        WHERE
+                            t.ingredients_ratio > 0.5
+    '''
 
-        if category != 'Todas':
-            clause = f''' AND
-                        t.categoria IN ("{category}")'''
-            query += clause
+            if category != 'Todas':
+                clause = f''' AND
+                            t.categoria IN ("{category}")'''
+                query += clause
 
-        query += ''' ORDER BY t.qtde_ingrediente_usuario DESC
-        LIMIT 21) AS t2
-            LEFT JOIN
-        recipes.images rim ON t2.href = rim.href'''
+            query += ''' ORDER BY t.qtde_ingrediente_usuario DESC
+            LIMIT 21) AS t2
+                LEFT JOIN
+            recipes.images rim ON t2.href = rim.href'''
 
 
-        results = engine.execute(query)
-        recipes = [recipe for recipe in results]
+            results = engine.execute(query)
+            recipes = [recipe for recipe in results]
 
     return render_template('receitas.html', recipes=recipes)
