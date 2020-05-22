@@ -35,7 +35,6 @@ tqdm = "*"
 urllib3 = "*"
 wasabi = "*"
 preshed = "*"
-pt-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/pt_core_news_sm-2.2.5/pt_core_news_sm-2.2.5.tar.gz
 Jinja2 = "*"
 Mako = "*"
 MarkupSafe = "*"
