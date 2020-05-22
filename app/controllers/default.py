@@ -7,6 +7,7 @@ from fuzzywuzzy import fuzz
 import sqlalchemy as db
 import os
 from app.controllers.clean_ingredients import clean_ingredient
+from unidecode import unidecode
 
 
 @app.route('/')
@@ -16,7 +17,7 @@ def index():
 
 @app.route('/receitas', methods=['POST'])
 def receitas():
-    df_ingredientes = pd.read_csv('./app/data/df_ingredientes2.csv')
+    df_ingredientes = pd.read_csv('./app/data/df_ingredient2.csv')
     form = IngredientForm()
     if form.category.data and form.ingredients.data:
         category = form.category.data
@@ -26,7 +27,9 @@ def receitas():
 
         id_ingredient_user = []
         for ingredient in user_ingredients:
+            ingredient = unidecode(ingredient)
             ingredient = clean_ingredient(ingredient)
+            print(ingredient)
             lst_id_ingredient = df_ingredientes.loc[df_ingredientes['ingrediente'] == f'{ingredient}', :]['id_ingrediente'].values
 
             if len(lst_id_ingredient) > 0:
@@ -41,6 +44,7 @@ def receitas():
                         id_ingredient = lst_id_ingredient[0]
                         id_ingredient_user.append(id_ingredient)
                         break
+        print(id_ingredient_user)
         if len(id_ingredient_user) > 1:
             id_ingredient_user = tuple(id_ingredient_user)
         elif len(id_ingredient_user) == 1:
@@ -84,18 +88,21 @@ def receitas():
                         GROUP BY ri.id_recipe
                         ORDER BY qtde_ingrediente_usuario DESC) AS t
                         WHERE
-                            t.ingredients_ratio > 0.5
+                            t.ingredients_ratio > 0.6
     '''
 
             if category != 'Todas':
                 clause = f''' AND
-                            t.categoria IN ("{category}")'''
+                            t.categoria IN ("{category}")
+                            '''
                 query += clause
 
-            query += ''' ORDER BY t.qtde_ingrediente_usuario DESC
-            LIMIT 21) AS t2
+            query += ''' LIMIT 200) AS t2
                 LEFT JOIN
-            recipes.images rim ON t2.href = rim.href'''
+            recipes.images rim ON t2.href = rim.href
+            WHERE rim.image_url IS NOT NULL
+            ORDER BY t2.ingredients_ratio DESC
+            LIMIT 21'''
 
 
             results = engine.execute(query)

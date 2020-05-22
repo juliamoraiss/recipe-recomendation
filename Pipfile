@@ -26,6 +26,7 @@ spacy = "*"
 pt_core_news_sm = { file = 'https://github.com/explosion/spacy-models/releases/download/pt_core_news_sm-2.2.5/pt_core_news_sm-2.2.5.tar.gz' }
 MarkupSafe = "*"
 mysql = "*"
+Unidecode = "*"
 mysql-connector = "*"
 mysqlclient = "*"
 numpy = "*"
