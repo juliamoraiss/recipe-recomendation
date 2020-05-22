@@ -49,7 +49,7 @@ def receitas():
             recipes = []
         else:
 
-            engine = db.create_engine(os.environ.get('DATABASE_URL')
+            engine = db.create_engine(os.environ.get('DATABASE_URL'))
 
 
             query = f'''SELECT 
