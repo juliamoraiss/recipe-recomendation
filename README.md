@@ -28,4 +28,4 @@ python run.py runserver
 
 ## Application
 
-[a link](http://recipe-recomendation.herokuapp.com/)
+[Final App](http://recipe-recomendation.herokuapp.com/)
