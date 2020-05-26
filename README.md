@@ -25,3 +25,7 @@ SERCRET_KEY -> your secret key
 ```python
 python run.py runserver
 ```
+
+## Application
+
+[a link](http://recipe-recomendation.herokuapp.com/)
